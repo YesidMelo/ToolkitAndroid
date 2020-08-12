@@ -3,7 +3,8 @@ package com.mitiempo.toolkitandroid
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.ProxyRetrofitRx
+import com.mitiempo.toolkitpasarelaspago.epayco.ManejadorEpayco
+import com.mitiempo.toolkitpasarelaspago.epayco.Utilidades.Autenticacion
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -13,19 +14,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         hola_mundo.setOnClickListener {
-            ProxyRetrofitRx()
-                .conUrlBase("http://192.168.0.3:3000/")
-                .conEscuchadorCodigoRespuesta {
-                    Log.e("codigoRespuesta","codigo : ${it}")
-                }
+            ManejadorEpayco()
+                .conApikeyPrivado("")
+                .conApikeyPublico("")
+                .esPrueba(true)
+                .conIdioma("ES")
                 .conEscuchadorFalla {
-                    Log.e("Error","Fallo detalle : ",it)
+                    Log.e("Error","",it)
                 }
-                .conEscuchadorRespuestaExitosa {
-                    Log.e("Respuesta","buena .... ")
+                .generarEpayco {
+                    Log.e("Error","Genero epayco")
                 }
-                .conServicio(Servicios.traerGet)
-                .realizarConsulta()
         }
     }
 }
