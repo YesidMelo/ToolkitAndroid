@@ -1,6 +1,9 @@
 package com.mitiempo.toolkitandroidclases.DataAccess
 
-import android.util.Log
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.ExceptionServicio
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.ExceptionURLBase
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.IServiceParameters
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.ProxyRetrofitRx
 import com.mitiempo.toolkitandroidclases.DataAccess.utilidadesPrueba.ObjetoAEnviar
 import com.mitiempo.toolkitandroidclases.DataAccess.utilidadesPrueba.ObjetoEsperado
 import com.mitiempo.toolkitandroidclases.DataAccess.utilidadesPrueba.Servicios
@@ -8,7 +11,7 @@ import org.junit.Test
 
 class TestProxyRetrofit {
 
-
+    val urlBase = "http://192.168.0.3:3000/"
     val proxyRetrofit = ProxyRetrofitRx()
 
     @Test
@@ -53,4 +56,60 @@ class TestProxyRetrofit {
 
     }
 
+    @Test
+    fun verificacionServicioCreado(){
+
+        val objetoAEnviar = ObjetoAEnviar()
+        objetoAEnviar.unElemento = "Elemento a enviar"
+        objetoAEnviar.otroElemento = "otro elemento"
+
+        val claseObjetoEsperado = ObjetoEsperado::class.java
+
+        val servicio = Servicios
+            .servicio_get
+            .WithComplement("")
+            .conObjetoAEnviar(objetoAEnviar)
+            .conObjetoEsperado(claseObjetoEsperado)
+
+        proxyRetrofit.conServicio(servicio)
+
+        assert(proxyRetrofit.traerServicioConsultado() == servicio)
+
+
+    }
+
+    @Test
+    fun verificacionPasoParametrosProxyRetrofit(){
+        var errorGenerado : Throwable ?= null
+        proxyRetrofit
+            .conEscuchadorFalla {
+                errorGenerado = it
+            }
+            .realizarConsulta()
+
+        assert(errorGenerado is ExceptionURLBase)
+
+        errorGenerado = null
+
+        proxyRetrofit
+            .conUrlBase(urlBase)
+            .conEscuchadorFalla {
+                errorGenerado = it
+            }
+            .realizarConsulta()
+
+        assert(errorGenerado is ExceptionServicio)
+
+
+    }
+
+    @Test
+    fun verificandoApiRestPorDefecto(){
+        assert(true)
+        Thread{
+            Thread.sleep(3_000)
+            print("hola pepito")
+        }.start()
+
+    }
 }

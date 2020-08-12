@@ -1,13 +1,13 @@
 package com.mitiempo.toolkitandroidclases.DataAccess.utilidadesPrueba
 
-import com.mitiempo.toolkitandroidclases.DataAccess.IRetrofitParcelable
-import com.mitiempo.toolkitandroidclases.DataAccess.IServiceParameters
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.IRetrofitParcelable
+import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.IServiceParameters
 
 enum class Servicios(
     private val url : String,
     private val metodo : IServiceParameters.Methods
     ) : IServiceParameters {
-    servicio_get("",IServiceParameters.Methods.GET)
+    servicio_get("", IServiceParameters.Methods.GET)
 
     ;
 
@@ -25,7 +25,7 @@ enum class Servicios(
         return this
     }
 
-    private var objeto_enviar : IRetrofitParcelable ?= null
+    private var objeto_enviar : IRetrofitParcelable?= null
     override fun <T : IRetrofitParcelable> conObjetoAEnviar(objetoAEnviar: T): IServiceParameters {
         this.objeto_enviar = objetoAEnviar
         return this

@@ -1,4 +1,4 @@
-package com.mitiempo.toolkitandroidclases.DataAccess
+package com.mitiempo.toolkitandroidclases.DataAccess.retrofit
 
 interface IServiceParameters {
 
