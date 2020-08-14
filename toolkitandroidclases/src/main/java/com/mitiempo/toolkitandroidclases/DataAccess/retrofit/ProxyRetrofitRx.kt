@@ -67,12 +67,12 @@ class ProxyRetrofitRx {
 
     private fun estanTodosLosParametros() : Boolean{
         if (urlBase.isEmpty()){
-            escuchadorFalla?.invoke(ExceptionURLBase(),servicio!!)
+            escuchadorFalla?.invoke(ExceptionURLBase(),servicio!!,0)
             return false
         }
 
         if(servicio == null ){
-            escuchadorFalla?.invoke(ExceptionServicio(),servicio!!)
+            escuchadorFalla?.invoke(ExceptionServicio(),servicio!!,0)
             return false
         }
 
@@ -81,13 +81,13 @@ class ProxyRetrofitRx {
 
 
 
-    private var escuchadorFalla : ((Throwable,IServiceParameters) -> Unit) ?= null
-    fun conEscuchadorFalla(escuchadorFalla : ((Throwable,IServiceParameters) -> Unit)) : ProxyRetrofitRx {
+    private var escuchadorFalla : ((Throwable,IServiceParameters,Int) -> Unit) ?= null
+    fun conEscuchadorFalla(escuchadorFalla : ((Throwable,IServiceParameters,Int) -> Unit)) : ProxyRetrofitRx {
         this.escuchadorFalla = escuchadorFalla
         return this
     }
 
-
+    private var codigoServidor = 0
     private fun generarCabezera() : OkHttpClient{
         val httpClient = OkHttpClient
             .Builder()
@@ -99,19 +99,14 @@ class ProxyRetrofitRx {
                 for(fila in cabezera.entries){
                     request.addHeader(fila.key,fila.value)
                 }
-
-                escuchadorCodigoRespuesta?.invoke(it.proceed(request.build()).code(),servicio!!)
+                codigoServidor = it.proceed(request.build()).code()
 
                 return@addInterceptor it.proceed(request.build())
             }.build()
         return httpClient
     }
 
-    private var escuchadorCodigoRespuesta : ((Int,IServiceParameters)-> Unit) ?= null
-    fun conEscuchadorCodigoRespuesta(escuchadorCodigoRespuesta : ((Int,IServiceParameters)-> Unit)): ProxyRetrofitRx {
-        this.escuchadorCodigoRespuesta = escuchadorCodigoRespuesta
-        return this
-    }
+
 
     private fun generarRequestInterface(client : OkHttpClient, rxJava2CallAdapterFactory: RxJava2CallAdapterFactory) : Retrofit {
         return Retrofit
@@ -154,18 +149,18 @@ class ProxyRetrofitRx {
             }
 
             override fun onNext(t: Any) {
-                EscuchadorRespuestaExitosaConServicio?.invoke(t,servicio!!)
+                EscuchadorRespuestaExitosaConServicio?.invoke(t,servicio!!,codigoServidor)
             }
 
             override fun onError(e: Throwable) {
-                escuchadorFalla?.invoke(e,servicio!!)
+                escuchadorFalla?.invoke(e,servicio!!,codigoServidor)
             }
 
         }
     }
 
-    private var EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters)->Unit) ?= null
-    fun conEscuchadorRespuestaExitosaConServicio(EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters)->Unit)) : ProxyRetrofitRx{
+    private var EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters,Int)->Unit) ?= null
+    fun conEscuchadorRespuestaExitosaConServicio(EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters,Int)->Unit)) : ProxyRetrofitRx{
         this.EscuchadorRespuestaExitosaConServicio = EscuchadorRespuestaExitosaConServicio
         return this
     }

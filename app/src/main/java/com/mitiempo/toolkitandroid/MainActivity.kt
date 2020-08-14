@@ -30,19 +30,30 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread { hola_mundo.isEnabled = true }
                     Log.e("Error","Fin consultas")
                 }
+                .conUrlBase("http://192.168.0.3:3000/")
                 .adicionarConsulta(Servicios.traerGet){
+                    objeto, codigoServidor ->
+                    Log.e("Error","Servicios.traerGet")
 
                 }
                 .adicionarConsulta(Servicios.traerGetServicio1){
+                    objeto, codigoServidor ->
+                    Log.e("Error","Servicios.traerGetServicio1")
 
                 }
                 .adicionarConsulta(Servicios.traerGetServicio2){
+                    objeto, codigoServidor ->
+                    Log.e("Error","Servicios.traerGetServicio2")
 
                 }
                 .adicionarConsulta(Servicios.traerGetServicio3){
+                    objeto, codigoServidor ->
+                    Log.e("Error","Servicios.traerGetServicio3")
 
                 }
                 .adicionarConsulta(Servicios.traerGetServicio4){
+                    objeto, codigoServidor ->
+                    Log.e("Error","Servicios.traerGetServicio4")
 
                 }
                 .iniciarConsulta()
