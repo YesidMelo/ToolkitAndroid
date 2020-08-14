@@ -55,6 +55,7 @@ class ManejadorProxyRetrofitRx {
                     .conUrlBase(urlBase!!)
                     .conEscuchadorFalla { error, servicio,codigoServidor ->
                         EscuchadorFalla?.invoke(error,servicio,codigoServidor)
+                        mapaConsultas.remove(servicio)
                     }
                     .conEscuchadorRespuestaExitosaConServicio { objeto, servicio ,codigoServidor ->
                         generarIRetrofitParcelable(objeto,servicio,codigoServidor)
