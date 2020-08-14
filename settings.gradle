@@ -1,2 +1,2 @@
-include ':app', ':toolkitandroidclases', ':toolkitpasarelaspago'
+include ':app', ':toolkitandroidclases'
 rootProject.name='ToolkitAndroid'

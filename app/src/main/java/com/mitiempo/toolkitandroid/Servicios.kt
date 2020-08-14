@@ -7,7 +7,11 @@ enum class Servicios(
     private val url: String,
     private val metodo : IServiceParameters.Methods
 ) : IServiceParameters {
-    traerGet("",IServiceParameters.Methods.GET)
+    traerGet("",IServiceParameters.Methods.GET),
+    traerGetServicio1("Servicio1",IServiceParameters.Methods.GET),
+    traerGetServicio2("Servicio2",IServiceParameters.Methods.GET),
+    traerGetServicio3("Servicio3",IServiceParameters.Methods.GET),
+    traerGetServicio4("Servicio4",IServiceParameters.Methods.GET),
     ;
 
     override fun getURL(): String {

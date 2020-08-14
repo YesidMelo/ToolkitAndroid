@@ -33,12 +33,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation project(":toolkitandroidclases")
-    implementation project(":toolkitpasarelaspago")
+
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'com.github.epayco:epayco-android:18c3e368dc'
+//    implementation 'com.github.epayco:epayco-android:18c3e368dc'
 
 
 }

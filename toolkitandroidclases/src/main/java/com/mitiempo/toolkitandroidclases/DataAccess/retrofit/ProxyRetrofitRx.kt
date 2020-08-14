@@ -67,12 +67,12 @@ class ProxyRetrofitRx {
 
     private fun estanTodosLosParametros() : Boolean{
         if (urlBase.isEmpty()){
-            escuchadorFalla?.invoke(ExceptionURLBase())
+            escuchadorFalla?.invoke(ExceptionURLBase(),servicio!!)
             return false
         }
 
         if(servicio == null ){
-            escuchadorFalla?.invoke(ExceptionServicio())
+            escuchadorFalla?.invoke(ExceptionServicio(),servicio!!)
             return false
         }
 
@@ -81,8 +81,8 @@ class ProxyRetrofitRx {
 
 
 
-    private var escuchadorFalla : ((Throwable) -> Unit) ?= null
-    fun conEscuchadorFalla(escuchadorFalla : ((Throwable) -> Unit)) : ProxyRetrofitRx {
+    private var escuchadorFalla : ((Throwable,IServiceParameters) -> Unit) ?= null
+    fun conEscuchadorFalla(escuchadorFalla : ((Throwable,IServiceParameters) -> Unit)) : ProxyRetrofitRx {
         this.escuchadorFalla = escuchadorFalla
         return this
     }
@@ -100,15 +100,15 @@ class ProxyRetrofitRx {
                     request.addHeader(fila.key,fila.value)
                 }
 
-                escuchadorCodigoRespuesta?.invoke(it.proceed(request.build()).code())
+                escuchadorCodigoRespuesta?.invoke(it.proceed(request.build()).code(),servicio!!)
 
                 return@addInterceptor it.proceed(request.build())
             }.build()
         return httpClient
     }
 
-    private var escuchadorCodigoRespuesta : ((Int)-> Unit) ?= null
-    fun conEscuchadorCodigoRespuesta(escuchadorCodigoRespuesta : ((Int)-> Unit)): ProxyRetrofitRx {
+    private var escuchadorCodigoRespuesta : ((Int,IServiceParameters)-> Unit) ?= null
+    fun conEscuchadorCodigoRespuesta(escuchadorCodigoRespuesta : ((Int,IServiceParameters)-> Unit)): ProxyRetrofitRx {
         this.escuchadorCodigoRespuesta = escuchadorCodigoRespuesta
         return this
     }
@@ -154,19 +154,19 @@ class ProxyRetrofitRx {
             }
 
             override fun onNext(t: Any) {
-                escuchadorRespuestaExitosa?.invoke(t)
+                EscuchadorRespuestaExitosaConServicio?.invoke(t,servicio!!)
             }
 
             override fun onError(e: Throwable) {
-                escuchadorFalla?.invoke(e)
+                escuchadorFalla?.invoke(e,servicio!!)
             }
 
         }
     }
 
-    private var escuchadorRespuestaExitosa : ((Any)->Unit) ?= null
-    fun conEscuchadorRespuestaExitosa(escuchadorRespuestaExitosa : ((Any)->Unit)) : ProxyRetrofitRx{
-        this.escuchadorRespuestaExitosa = escuchadorRespuestaExitosa
+    private var EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters)->Unit) ?= null
+    fun conEscuchadorRespuestaExitosaConServicio(EscuchadorRespuestaExitosaConServicio : ((Any,IServiceParameters)->Unit)) : ProxyRetrofitRx{
+        this.EscuchadorRespuestaExitosaConServicio = EscuchadorRespuestaExitosaConServicio
         return this
     }
 
