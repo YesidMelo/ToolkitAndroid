@@ -1,6 +1,8 @@
 package com.mitiempo.toolkitandroidclases.DataAccess.retrofit
 
-import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 
 class ManejadorProxyRetrofitRx {
 
@@ -36,6 +38,7 @@ class ManejadorProxyRetrofitRx {
 
     private var cabezera = emptyMap<String,String>().toMutableMap()
     fun adicionarParametroACabecera(llave : String,valor : String) : ManejadorProxyRetrofitRx{
+        cabezera.put(llave,valor)
         return this
     }
 
@@ -54,10 +57,11 @@ class ManejadorProxyRetrofitRx {
                         EscuchadorFalla?.invoke(error,servicio,codigoServidor)
                     }
                     .conEscuchadorRespuestaExitosaConServicio { objeto, servicio ,codigoServidor ->
-                        mapaConsultas[servicio]?.invoke(objeto,codigoServidor)
+                        generarIRetrofitParcelable(objeto,servicio,codigoServidor)
                         mapaConsultas.remove(servicio)
                     }
                     .conServicio(fila.key)
+                    .conCabezera(cabezera)
                     .realizarConsulta()
 
             }
@@ -86,5 +90,47 @@ class ManejadorProxyRetrofitRx {
         return true
     }
 
+    private fun generarIRetrofitParcelable(objeto : Any,servicio : IServiceParameters,codigoServidor : Int) {
+
+        if(esUnicoObjeto(objeto,servicio,codigoServidor)){ return }
+        if(esListaObjetos(objeto,servicio,codigoServidor)){ return }
+        mapaConsultas[servicio]?.invoke(null,codigoServidor)
+
+    }
+
+    private fun esUnicoObjeto(objeto : Any,servicio : IServiceParameters,codigoServidor : Int) : Boolean{
+        return try {
+            val gson = Gson()
+            val objetoJson = gson.toJson(objeto)
+            val respuesta = gson.fromJson(objetoJson,servicio.traerClaseObjetoEsperado())
+            mapaConsultas[servicio]?.invoke(respuesta,codigoServidor)
+            true
+        }catch (e : Exception){
+            false
+        }
+    }
+
+    private fun esListaObjetos(objeto : Any,servicio : IServiceParameters,codigoServidor : Int) : Boolean{
+        return try {
+            val gson = Gson()
+            val objetoJson = gson.toJson(objeto)
+
+            val tipo = object :TypeToken<MutableList<Any>>(){}.type
+            val listaCruda = gson.fromJson(objetoJson,tipo) as MutableList<*>
+            val listaCasteada = emptyList<Any>().toMutableList()
+
+            for(objetoCrudo in listaCruda){
+                val objJson = gson.toJson(objetoCrudo)
+                val objetoCasteado = gson.fromJson(objJson,servicio.traerClaseObjetoEsperado())
+                listaCasteada.add(objetoCasteado)
+            }
+
+            mapaConsultas[servicio]?.invoke(listaCasteada,codigoServidor)
+
+            true
+        }catch (e : Exception){
+            false
+        }
+    }
 
 }

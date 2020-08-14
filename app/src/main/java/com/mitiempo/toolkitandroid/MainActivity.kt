@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
                 .conUrlBase("http://192.168.0.3:3000/")
                 .adicionarConsulta(Servicios.traerGet){
                     objeto, codigoServidor ->
+                    val tmp = objeto
                     Log.e("Error","Servicios.traerGet")
 
                 }
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 .adicionarConsulta(Servicios.traerGetServicio2){
                     objeto, codigoServidor ->
+                    val tmp = objeto
                     Log.e("Error","Servicios.traerGetServicio2")
 
                 }
