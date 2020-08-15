@@ -2,9 +2,9 @@ package com.mitiempo.toolkitandroid
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.IRetrofitParcelable
-import com.mitiempo.toolkitandroidclases.DataAccess.retrofit.ManejadorProxyRetrofitRx
+import com.mitiempo.toolkitandroidclases.Utilidades.Permisos.Permisos
+import com.mitiempo.toolkitandroidclases.Utilidades.Permisos.SolicitantePermisos
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -14,51 +14,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         hola_mundo.setOnClickListener {
-
-            configurarServicio(Servicios.traerGet)
-            configurarServicio(Servicios.traerGetServicio1)
-            configurarServicio(Servicios.traerGetServicio2)
-            configurarServicio(Servicios.traerGetServicio3)
-            configurarServicio(Servicios.traerGetServicio4)
-
-            ManejadorProxyRetrofitRx()
-                .conEscuchadorInicioConsulta {
-                    runOnUiThread { hola_mundo.isEnabled = false }
-                    Log.e("Error","Inicio consultas")
-                }
-                .conInicioEscuchadorFinConsulta {
-                    runOnUiThread { hola_mundo.isEnabled = true }
-                    Log.e("Error","Fin consultas")
-                }
-                .conUrlBase("http://192.168.0.3:3000/")
-                .adicionarConsulta(Servicios.traerGet){
-                    objeto, codigoServidor ->
-                    val tmp = objeto
-                    Log.e("Error","Servicios.traerGet")
+            SolicitantePermisos(this)
+                .adicionarPermisoASolicitar(Permisos.CAMERA)
+                .adicionarPermisoASolicitar(Permisos.ACCESS_FINE_LOCATION)
+                .conEscuchadorTengoLosPermisosHabilitados{
 
                 }
-                .adicionarConsulta(Servicios.traerGetServicio1){
-                    objeto, codigoServidor ->
-                    Log.e("Error","Servicios.traerGetServicio1")
+                .conEscuchadorNoTengoLosPermisosHabilitados {
 
                 }
-                .adicionarConsulta(Servicios.traerGetServicio2){
-                    objeto, codigoServidor ->
-                    val tmp = objeto
-                    Log.e("Error","Servicios.traerGetServicio2")
-
-                }
-                .adicionarConsulta(Servicios.traerGetServicio3){
-                    objeto, codigoServidor ->
-                    Log.e("Error","Servicios.traerGetServicio3")
-
-                }
-                .adicionarConsulta(Servicios.traerGetServicio4){
-                    objeto, codigoServidor ->
-                    Log.e("Error","Servicios.traerGetServicio4")
-
-                }
-                .iniciarConsulta()
+                .solicitarPermisos()
 
         }
     }
