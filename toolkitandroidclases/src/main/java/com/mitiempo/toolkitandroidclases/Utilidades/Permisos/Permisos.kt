@@ -169,7 +169,6 @@ enum class Permisos (private val NombrePermiso : String, private val requestCode
 
 
 
-
     ;
 
     fun traerNombrePermisoManifiest() : String{
@@ -180,5 +179,13 @@ enum class Permisos (private val NombrePermiso : String, private val requestCode
         return requestCode
     }
 
-
+    companion object{
+        fun buscarPermiso(nombrePermiso : String) : Permisos{
+            for (permiso in values()){
+                if(permiso.traerNombrePermisoManifiest() != nombrePermiso){ continue }
+                return permiso
+            }
+            return ACCESS_FINE_LOCATION;
+        }
+    }
 }

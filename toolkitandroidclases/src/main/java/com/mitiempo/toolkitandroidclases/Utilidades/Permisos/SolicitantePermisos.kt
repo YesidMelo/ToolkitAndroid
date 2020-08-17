@@ -2,6 +2,7 @@ package com.mitiempo.toolkitandroidclases.Utilidades.Permisos
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,18 +27,17 @@ class SolicitantePermisos(private val context: Context) {
         return this
     }
 
-    fun solicitarPermisos(){
+    fun solicitarPermisos() : SolicitantePermisos{
 
-        if (permisosASolicitarUsuario.isEmpty()){ return }
+        if (permisosASolicitarUsuario.isEmpty()){ return this }
 
         if (tengoTodosLosPermisosDelUsuarioHabilitados()){
             EscuchadorTengoLosPermisosHabilitados?.invoke()
-            return
+            return this
         }
 
         solicitarPermisosFaltantes()
-
-
+        return this
     }
 
 //    region verificar permisos faltantes
@@ -73,5 +73,52 @@ class SolicitantePermisos(private val context: Context) {
         ActivityCompat.requestPermissions(context as AppCompatActivity,listaString.toTypedArray(),Permisos.ACCESS_FINE_LOCATION.traerRequestCode())
     }
 
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            Permisos.ACCESS_FINE_LOCATION.traerRequestCode() ->{
 
+                for(permiso in permissions){
+                    val permisoEnum = Permisos.buscarPermiso(permiso)
+                    if(!estePermisoEsUnoDeUsuario(permisoEnum)){ continue }
+                    if(!tengoEstePermisoHabilitado(permisoEnum)){ continue }
+                    removerPermiso(permisoEnum)
+                }
+
+                if(listaASolicitar.isNotEmpty()){
+                    EscuchadorNoTengoLosPermisosHabilitados?.invoke()
+                    return
+                }
+
+                EscuchadorTengoLosPermisosHabilitados?.invoke()
+
+            }
+            else ->{
+
+            }
+        }
+    }
+
+    private fun estePermisoEsUnoDeUsuario(permiso : Permisos) : Boolean{
+
+        for(permisoUsuario in listaASolicitar){
+            if(permiso != permisoUsuario){ continue }
+            return true
+        }
+        return false
+    }
+
+    private fun removerPermiso(permiso: Permisos){
+        val listaTemporal = emptyList<Permisos>().toMutableList()
+
+        for (permisoUsuario in listaASolicitar){
+            if(permiso == permisoUsuario){ continue }
+            listaTemporal.add(permisoUsuario)
+        }
+
+        listaASolicitar = listaTemporal
+    }
 }
