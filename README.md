@@ -23,6 +23,7 @@ allprojects {
 Esta libreria de clases contiene las siguientes clases : 
 
 1. ManejadorProxyRetrofitRx
+2. SolicitantePermisos
 
 ### Implementacion de ManejadorProxyRetrofitRx
 1. Debes crear un enumerador de servicios que extiende de IServiceParameters. Esta clase esta pensada para funciones api rest con json
@@ -109,3 +110,38 @@ ManejadorProxyRetrofitRx()
 	.iniciarConsulta()
 
 ```
+### SolicitantePermisos
+La implementacion de esta clase se realiza de la siguiente manera : 
+ejemplo
+```[language]
+private var solicitantePermisos : SolicitantePermisos ?= null 
+------------------------
+SolicitantePermisos(this)
+                .adicionarPermisoASolicitar(Permisos.CAMERA)
+                .adicionarPermisoASolicitar(Permisos.ACCESS_FINE_LOCATION)
+                .conEscuchadorTengoLosPermisosHabilitados{
+                    Log.e("Error","tengo todos los permisos")
+                }
+                .conEscuchadorNoTengoLosPermisosHabilitados {
+                    Log.e("Error","no tengo todos los permisos")
+                }
+                .solicitarPermisos()
+```
+
+Adicionar en el AppCompatActivity 
+```[Language]
+override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        solicitante_permisos?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+```
+#### Notas:
+ 1. this es un AppCompatActivity
+ 2. puede adicionar mas permisos adicionando mas lineas
+ ```[language]
+ .adicionarPermisoASolicitar(Permisos.ACCESS_FINE_LOCATION)
+ ```
